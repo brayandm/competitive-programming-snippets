@@ -101,7 +101,7 @@ def generate_vscode_snippets():
     new_extension = ".code-snippets"
 
     folder = "Sublime-snippets"
-    new_folder = "Code-snippets"
+    new_folder = "VSCode-snippets"
 
     if os.path.exists(new_folder):
         os.system(f"rm -r {new_folder}")
