@@ -1,148 +1,147 @@
 import os
 
-def get_dir_snippets_with_extension(dir, extension):
 
-    paths = os.walk(dir)
+def generate_vscode_snippets():
 
-    good_paths = []
+    def get_dir_snippets_with_extension(dir, extension):
 
-    for path in paths:
+        paths = os.walk(dir)
 
-        for file in path[2]:
+        good_paths = []
 
-            if len(file) >= len(extension) and file[-len(extension):] == extension:
+        for path in paths:
 
-                good_paths.append(os.path.join(path[0], file))
+            for file in path[2]:
 
-    return good_paths
+                if len(file) >= len(extension) and file[-len(extension) :] == extension:
 
+                    good_paths.append(os.path.join(path[0], file))
 
-def delete_starting_and_ending_lines(lines):
+        return good_paths
 
-    new_lines = lines.copy()
+    def delete_starting_and_ending_lines(lines):
 
-    while new_lines[0] == '\n':
+        new_lines = lines.copy()
 
-        new_lines = new_lines[1:]
+        while new_lines[0] == "\n":
 
-    while new_lines[-1] == '\n':
+            new_lines = new_lines[1:]
 
-        new_lines = new_lines[:-1]
+        while new_lines[-1] == "\n":
 
-    return new_lines
+            new_lines = new_lines[:-1]
 
+        return new_lines
 
-def get_code(lines):
-    
-    lines = delete_starting_and_ending_lines(lines)[2:-6]
+    def get_code(lines):
 
-    for i in range(len(lines)):
+        lines = delete_starting_and_ending_lines(lines)[2:-6]
 
-        lines[i] = lines[i][:-1]
+        for i in range(len(lines)):
 
-        for j in reversed(range(len(lines[i]))):
+            lines[i] = lines[i][:-1]
 
-            if lines[i][j] == '\"':
-            
-                lines[i] = lines[i][:j] + '\\\"' + lines[i][j+1:]
+            for j in reversed(range(len(lines[i]))):
 
-            elif lines[i][j] == '\'':
-            
-                lines[i] = lines[i][:j] + '\\\'' + lines[i][j+1:]
-            
-            elif lines[i][j] == '\t':
-            
-                lines[i] = lines[i][:j] + '\\\t' + lines[i][j+1:]
+                if lines[i][j] == '"':
 
-            elif lines[i][j] == '\\':
-            
-                lines[i] = lines[i][:j] + '\\\\' + lines[i][j+1:]
-            
-    return lines
+                    lines[i] = lines[i][:j] + '\\"' + lines[i][j + 1 :]
 
+                elif lines[i][j] == "'":
 
-def get_command(lines):
+                    lines[i] = lines[i][:j] + "\\'" + lines[i][j + 1 :]
 
-    return delete_starting_and_ending_lines(lines)[-4][13:-14]
+                elif lines[i][j] == "\t":
 
+                    lines[i] = lines[i][:j] + "\\\t" + lines[i][j + 1 :]
 
-def normalize_name(name):
+                elif lines[i][j] == "\\":
 
-    name += '_'
+                    lines[i] = lines[i][:j] + "\\\\" + lines[i][j + 1 :]
 
-    new_name = ''
+        return lines
 
-    temp_name = ''
+    def get_command(lines):
 
-    for i in range(len(name)):
+        return delete_starting_and_ending_lines(lines)[-4][13:-14]
 
-        if name[i] != '_':
+    def normalize_name(name):
 
-            temp_name += name[i]
-        
-        else:
+        name += "_"
 
-            if len(temp_name) > 0:
+        new_name = ""
 
-                if len(new_name) == 0:
+        temp_name = ""
 
-                    new_name += temp_name.capitalize()
+        for i in range(len(name)):
 
-                else:
+            if name[i] != "_":
 
-                    new_name += ' ' + temp_name.capitalize()
+                temp_name += name[i]
 
-                temp_name = ''
+            else:
 
-    return new_name
-            
-extension = '.sublime-snippet'
-new_extension = '.code-snippets'
+                if len(temp_name) > 0:
 
-folder = 'Sublime-snippets'
-new_folder = 'Code-snippets'
+                    if len(new_name) == 0:
 
-os.system('cp -r ' + folder + ' ' + new_folder)
+                        new_name += temp_name.capitalize()
 
-path = get_dir_snippets_with_extension(new_folder, extension)
+                    else:
 
-for file_path in path:
+                        new_name += " " + temp_name.capitalize()
 
-    file = open(file_path, 'r')
+                    temp_name = ""
 
-    lines = file.readlines()
+        return new_name
 
-    file.close()
+    extension = ".sublime-snippet"
+    new_extension = ".code-snippets"
 
-    code = get_code(lines)
+    folder = "Sublime-snippets"
+    new_folder = "Code-snippets"
 
-    command = get_command(lines)
+    os.system("cp -r " + folder + " " + new_folder)
 
-    name = normalize_name(command)
+    path = get_dir_snippets_with_extension(new_folder, extension)
 
-    text = ''
+    for file_path in path:
 
-    text += '{\n'
-    text += '\t\"' + name + '\": {\n'
-    text += '\t\t\"scope\": \"cpp\",\n'
-    text += '\t\t\"prefix\": \"' + command + '\",\n'
-    text += '\t\t\"body\": [\n'
-                
-    for line in code:
+        file = open(file_path, "r")
 
-        text += '\t\t\t\"' + line + '\",\n'
+        lines = file.readlines()
 
-    text += '\t\t],\n'
-    text += '\t\t\"description\": \"' + name + '\"\n'
-    text += '\t}\n'
-    text += '}\n'
+        file.close()
 
-    os.remove(file_path)
+        code = get_code(lines)
 
-    file = open(file_path[:-len(extension)] + new_extension, 'w')
+        command = get_command(lines)
 
-    print(file_path[:-len(extension)] + new_extension)
+        name = normalize_name(command)
 
-    file.write(text)
+        text = ""
 
-    file.close()
+        text += "{\n"
+        text += '\t"' + name + '": {\n'
+        text += '\t\t"scope": "cpp",\n'
+        text += '\t\t"prefix": "' + command + '",\n'
+        text += '\t\t"body": [\n'
+
+        for line in code:
+
+            text += '\t\t\t"' + line + '",\n'
+
+        text += "\t\t],\n"
+        text += '\t\t"description": "' + name + '"\n'
+        text += "\t}\n"
+        text += "}\n"
+
+        os.remove(file_path)
+
+        file = open(file_path[: -len(extension)] + new_extension, "w")
+
+        print(file_path[: -len(extension)] + new_extension)
+
+        file.write(text)
+
+        file.close()
