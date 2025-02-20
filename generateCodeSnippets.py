@@ -1,4 +1,6 @@
 import os
+import xml.etree.ElementTree as ET
+import re
 
 
 def generate_vscode_snippets():
@@ -145,3 +147,63 @@ def generate_vscode_snippets():
         file.write(text)
 
         file.close()
+
+
+def generate_sublime_snippets():
+    def process_snippet_file(file_path):
+        try:
+            with open(file_path, "r", encoding="utf-8") as cpp_file:
+                lines = cpp_file.readlines()
+
+            tab_trigger = None
+            content_lines = []
+
+            for line in lines:
+                match = re.match(r"// TAB_TRIGGER \"(.+)\"", line)
+                if match:
+                    tab_trigger = match.group(1)
+                else:
+                    content_lines.append(line)
+
+            if tab_trigger is None:
+                print(f"Skipping {file_path}: No TAB_TRIGGER comment found.")
+                return
+
+            content = "".join(content_lines).strip()
+
+            snippet_content = f"""<snippet>
+        <content><![CDATA[
+    {content}
+    ]]></content>
+        <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+        <tabTrigger>{tab_trigger}</tabTrigger>
+        <!-- Optional: Set a scope to limit where the snippet will trigger -->
+        <!-- <scope>source.python</scope> -->
+    </snippet>"""
+
+            new_file_path = file_path.replace(".cpp", ".sublime-snippet")
+            with open(new_file_path, "w", encoding="utf-8") as snippet_file:
+                snippet_file.write(snippet_content)
+
+            os.remove(file_path)
+            print(f"Converted {file_path} -> {new_file_path}")
+        except Exception as e:
+            print(f"Error processing {file_path}: {e}")
+
+    def process_snippets_directory(directory):
+        for root, _, files in os.walk(directory):
+            for file in files:
+                if file.endswith(".cpp"):
+                    file_path = os.path.join(root, file)
+                    process_snippet_file(file_path)
+
+    if __name__ == "__main__":
+        snippets_dir = "Code"
+        if os.path.exists(snippets_dir):
+            process_snippets_directory(snippets_dir)
+        else:
+            print(f"Directory '{snippets_dir}' not found.")
+
+
+generate_sublime_snippets()
+generate_vscode_snippets()
