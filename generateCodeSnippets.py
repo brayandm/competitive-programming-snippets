@@ -174,14 +174,14 @@ def generate_sublime_snippets():
             content = "".join(content_lines).strip()
 
             snippet_content = f"""<snippet>
-        <content><![CDATA[
-    {content}
-    ]]></content>
-        <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
-        <tabTrigger>{tab_trigger}</tabTrigger>
-        <!-- Optional: Set a scope to limit where the snippet will trigger -->
-        <!-- <scope>source.python</scope> -->
-    </snippet>"""
+    <content><![CDATA[
+{content}
+]]></content>
+    <!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+    <tabTrigger>{tab_trigger}</tabTrigger>
+    <!-- Optional: Set a scope to limit where the snippet will trigger -->
+    <!-- <scope>source.python</scope> -->
+</snippet>"""
 
             new_file_path = file_path.replace(".cpp", ".sublime-snippet")
             with open(new_file_path, "w", encoding="utf-8") as snippet_file:
