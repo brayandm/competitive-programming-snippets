@@ -65,7 +65,7 @@ def generate_vscode_snippets():
 
     def get_command(lines):
 
-        return delete_starting_and_ending_lines(lines)[-4][13:-14]
+        return delete_starting_and_ending_lines(lines)[-4][16:-14]
 
     def normalize_name(name):
 
