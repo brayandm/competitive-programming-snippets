@@ -103,6 +103,8 @@ def generate_vscode_snippets():
     folder = "Sublime-snippets"
     new_folder = "Code-snippets"
 
+    if os.path.exists(new_folder):
+        os.system(f"rm -r {new_folder}")
     os.system("cp -r " + folder + " " + new_folder)
 
     path = get_dir_snippets_with_extension(new_folder, extension)
@@ -200,6 +202,8 @@ def generate_sublime_snippets():
     source_dir = "Code"
     target_dir = "Sublime-snippets"
 
+    if os.path.exists(target_dir):
+        os.system(f"rm -r {target_dir}")
     os.system(f"cp -r {source_dir} {target_dir}")
 
     snippets_dir = "Sublime-snippets"
