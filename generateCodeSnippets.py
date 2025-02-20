@@ -197,12 +197,16 @@ def generate_sublime_snippets():
                     file_path = os.path.join(root, file)
                     process_snippet_file(file_path)
 
-    if __name__ == "__main__":
-        snippets_dir = "Code"
-        if os.path.exists(snippets_dir):
-            process_snippets_directory(snippets_dir)
-        else:
-            print(f"Directory '{snippets_dir}' not found.")
+    source_dir = "Code"
+    target_dir = "Sublime-snippets"
+
+    os.system(f"cp -r {source_dir} {target_dir}")
+
+    snippets_dir = "Sublime-snippets"
+    if os.path.exists(snippets_dir):
+        process_snippets_directory(snippets_dir)
+    else:
+        print(f"Directory '{snippets_dir}' not found.")
 
 
 generate_sublime_snippets()
