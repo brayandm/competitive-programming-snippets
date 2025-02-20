@@ -1,0 +1,19 @@
+<snippet>
+	<content><![CDATA[
+typedef long long ll;
+
+inline ll ceil(ll a, ll b)
+{
+    return a/b + ((a>0)^(b>0) ? 0 : a%b != 0);
+}
+
+inline ll floor(ll a, ll b)
+{
+    return a/b - ((a>0)^(b>0) ? a%b != 0 : 0);
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>__INTEGER_DIVISION</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>
