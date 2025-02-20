@@ -1,24 +1,16 @@
 import os
+import shutil
 import xml.etree.ElementTree as ET
 import re
 
 
 def generate_vscode_snippets():
-
-    def get_dir_snippets_with_extension(dir, extension):
-
-        paths = os.walk(dir)
-
+    def get_dir_snippets_with_extension(directory, extension):
         good_paths = []
-
-        for path in paths:
-
-            for file in path[2]:
-
-                if len(file) >= len(extension) and file[-len(extension) :] == extension:
-
-                    good_paths.append(os.path.join(path[0], file))
-
+        for root, _, files in os.walk(directory):
+            for file in files:
+                if file.endswith(extension):
+                    good_paths.append(os.path.join(root, file))
         return good_paths
 
     def delete_starting_and_ending_lines(lines):
@@ -104,18 +96,14 @@ def generate_vscode_snippets():
     new_folder = "VSCode-snippets"
 
     if os.path.exists(new_folder):
-        os.system(f"rm -r {new_folder}")
-    os.system("cp -r " + folder + " " + new_folder)
+        shutil.rmtree(new_folder)
+    shutil.copytree(folder, new_folder)
 
-    path = get_dir_snippets_with_extension(new_folder, extension)
+    paths = get_dir_snippets_with_extension(new_folder, extension)
 
-    for file_path in path:
-
-        file = open(file_path, "r")
-
-        lines = file.readlines()
-
-        file.close()
+    for file_path in paths:
+        with open(file_path, "r", encoding="utf-8") as file:
+            lines = file.readlines()
 
         code = get_code(lines)
 
@@ -141,14 +129,10 @@ def generate_vscode_snippets():
         text += "}\n"
 
         os.remove(file_path)
-
-        file = open(file_path[: -len(extension)] + new_extension, "w")
-
-        print(file_path[: -len(extension)] + new_extension)
-
-        file.write(text)
-
-        file.close()
+        new_file_path = file_path[: -len(extension)] + new_extension
+        with open(new_file_path, "w", encoding="utf-8") as file:
+            file.write(text)
+        print(f"Converted {file_path} -> {new_file_path}")
 
 
 def generate_sublime_snippets():
@@ -203,8 +187,8 @@ def generate_sublime_snippets():
     target_dir = "Sublime-snippets"
 
     if os.path.exists(target_dir):
-        os.system(f"rm -r {target_dir}")
-    os.system(f"cp -r {source_dir} {target_dir}")
+        shutil.rmtree(target_dir)
+    shutil.copytree(source_dir, target_dir)
 
     snippets_dir = "Sublime-snippets"
     if os.path.exists(snippets_dir):
